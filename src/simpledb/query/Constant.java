@@ -30,6 +30,26 @@ public class Constant implements Comparable<Constant> {
         return (ival != null) ? ival.equals(c.ival) : sval.equals(c.sval);
     }
 
+    public boolean lt(Constant c) {
+        return this.compareTo(c) < 0;
+    }
+
+    public boolean gt(Constant c) {
+        return this.compareTo(c) > 0;
+    }
+
+    public boolean le(Constant c) {
+        return lt(c) || this.equals(c);
+    }
+
+    public boolean ge(Constant c) {
+        return gt(c) || this.equals(c);
+    }
+
+    public boolean ne(Constant c) {
+        return !equals(c);
+    }
+
     public int compareTo(Constant c) {
         return (ival != null) ? ival.compareTo(c.ival) : sval.compareTo(c.sval);
     }

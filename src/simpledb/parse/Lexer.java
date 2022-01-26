@@ -1,5 +1,7 @@
 package simpledb.parse;
 
+import simpledb.query.RelOp;
+
 import java.util.*;
 import java.io.*;
 
@@ -54,7 +56,7 @@ public class Lexer {
      * @return true if the current token is a string
      */
     public boolean matchStringConstant() {
-        return '\'' == (char) tok.ttype;
+        return '\'' == (char) tok.ttype || '\"' == (char) tok.ttype;
     }
 
     /**
@@ -74,6 +76,18 @@ public class Lexer {
      */
     public boolean matchId() {
         return tok.ttype == StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+    }
+
+    /**
+     * Returns true if the current token is a relational operator.
+     *
+     * @return true if the current token is a relational operator
+     */
+    public boolean matchRelOp() {
+        return tok.ttype == (int) '>' ||
+                tok.ttype == (int) '<' ||
+                tok.ttype == (int) '!' ||
+                tok.ttype == (int) '=';
     }
 
 //Methods to "eat" the current token
@@ -146,6 +160,56 @@ public class Lexer {
         if (!matchId())
             throw new BadSyntaxException();
         String s = tok.sval;
+        nextToken();
+        return s;
+    }
+
+    /**
+     * Throws an exception if the current token is not a relational operator.
+     * Otherwise, returns the relational operator string and moves to the next token.
+     * A relational operator is '<' '>' '<=' '>=' '==' '!=' '<>' (<> means 'not equals')
+     *
+     * @return the string value of the current token
+     */
+    public RelOp eatRelOp() {
+        if (!matchRelOp())
+            throw new BadSyntaxException();
+        RelOp s;
+        switch (tok.ttype) {
+            case '>': // > >=
+                nextToken();
+                if (tok.ttype == (int) '=') {
+                    s = RelOp.ge();
+                } else {
+                    s = RelOp.gt();
+                    tok.pushBack();
+                }
+                break;
+            case '<': // < <= <>
+                nextToken();
+                if (tok.ttype == (int) '=') {
+                    s = RelOp.le();
+                } else if (tok.ttype == (int) '>') {
+                    s = RelOp.neDiamond();
+                } else {
+                    s = RelOp.lt();
+                    tok.pushBack();
+                }
+                break;
+            case '!': // !=
+                nextToken();
+                if (tok.ttype == (int) '=') {
+                    s = RelOp.ne();
+                } else {
+                    throw new BadSyntaxException();
+                }
+                break;
+            case '=': // ==
+                s = RelOp.eq();
+                break;
+            default:
+                throw new BadSyntaxException();
+        }
         nextToken();
         return s;
     }

@@ -11,6 +11,7 @@ import simpledb.record.*;
 public class Term {
     private final Expression lhs;
     private final Expression rhs;
+    private final RelOp relOp;
 
     /**
      * Create a new term that compares two expressions
@@ -19,8 +20,9 @@ public class Term {
      * @param lhs the LHS expression
      * @param rhs the RHS expression
      */
-    public Term(Expression lhs, Expression rhs) {
+    public Term(Expression lhs, RelOp relOp, Expression rhs) {
         this.lhs = lhs;
+        this.relOp = relOp;
         this.rhs = rhs;
     }
 
@@ -35,7 +37,7 @@ public class Term {
     public boolean isSatisfied(Scan s) {
         Constant lhsval = lhs.evaluate(s);
         Constant rhsval = rhs.evaluate(s);
-        return rhsval.equals(lhsval);
+        return relOp.evaluate(lhsval, rhsval);
     }
 
     /**
