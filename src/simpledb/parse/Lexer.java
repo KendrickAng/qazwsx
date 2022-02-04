@@ -90,6 +90,10 @@ public class Lexer {
                 tok.ttype == (int) '=';
     }
 
+    public boolean matchIndexType() {
+        return tok.ttype == StreamTokenizer.TT_WORD && (tok.sval.equals("hash") || tok.sval.equals("btree"));
+    }
+
 //Methods to "eat" the current token
 
     /**
@@ -210,6 +214,13 @@ public class Lexer {
             default:
                 throw new BadSyntaxException();
         }
+        nextToken();
+        return s;
+    }
+
+    public String eatIndexType() {
+        if (!matchIndexType()) throw new BadSyntaxException();
+        String s = tok.sval;
         nextToken();
         return s;
     }

@@ -100,6 +100,19 @@ public class CreateStudentDB {
                 planner.executeUpdate(s + enrollvals[i], tx);
             System.out.println("ENROLL records inserted.");
 
+            // create indexes
+            s = "create index sid on student(sid) using btree";
+            planner.executeUpdate(s, tx);
+            System.out.println("Created btree index 'sid' on STUDENT(sid).");
+
+            s = "create index majorid on student(majorid) using hash";
+            planner.executeUpdate(s, tx);
+            System.out.println("Created hash index 'majorid' on STUDENT(majorid).");
+
+            s = "create index studentid on enroll(studentid) using hash";
+            planner.executeUpdate(s, tx);
+            System.out.println("Created hash index 'studentid' on ENROLL(studentid).");
+
             tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
