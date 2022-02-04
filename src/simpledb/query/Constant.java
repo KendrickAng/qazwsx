@@ -27,6 +27,15 @@ public class Constant implements Comparable<Constant> {
 
     public boolean equals(Object obj) {
         Constant c = (Constant) obj;
+        if (ival != null) {
+            System.out.println("integer!");
+            System.out.println(ival);
+            System.out.println(c.ival);
+        } else {
+            System.out.println("string!");
+            System.out.println(sval);
+            System.out.println(c.sval);
+        }
         return (ival != null) ? ival.equals(c.ival) : sval.equals(c.sval);
     }
 

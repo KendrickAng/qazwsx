@@ -20,6 +20,7 @@ import simpledb.index.btree.BTreeIndex; //in case we change to btree indexing
  */
 public class IndexInfo {
     private final String idxname;
+    private final String idxtype;
     private final String fldname;
     private final Transaction tx;
     private final Schema tblSchema;
@@ -30,14 +31,16 @@ public class IndexInfo {
      * Create an IndexInfo object for the specified index.
      *
      * @param idxname   the name of the index
+     * @param idxtype   the type of the index - "hash" or "btree"
      * @param fldname   the name of the indexed field
      * @param tx        the calling transaction
      * @param tblSchema the schema of the table
      * @param si        the statistics for the table
      */
-    public IndexInfo(String idxname, String fldname, Schema tblSchema,
+    public IndexInfo(String idxname, String idxtype, String fldname, Schema tblSchema,
                      Transaction tx, StatInfo si) {
         this.idxname = idxname;
+        this.idxtype = idxtype;
         this.fldname = fldname;
         this.tx = tx;
         this.tblSchema = tblSchema;
@@ -51,8 +54,11 @@ public class IndexInfo {
      * @return the Index object associated with this information
      */
     public Index open() {
-        return new HashIndex(tx, idxname, idxLayout);
-//    return new BTreeIndex(tx, idxname, idxLayout);
+        switch (idxtype) {
+            case "hash": return new HashIndex(tx, idxname, idxLayout);
+            case "btree": return new BTreeIndex(tx, idxname, idxLayout);
+            default: throw new RuntimeException();
+        }
     }
 
     /**

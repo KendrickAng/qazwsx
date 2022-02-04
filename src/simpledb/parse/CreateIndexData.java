@@ -7,14 +7,16 @@ package simpledb.parse;
  */
 public class CreateIndexData {
     private final String idxname;
+    private final String idxtype;
     private final String tblname;
     private final String fldname;
 
     /**
      * Saves the table and field names of the specified index.
      */
-    public CreateIndexData(String idxname, String tblname, String fldname) {
+    public CreateIndexData(String idxname, String idxtype, String tblname, String fldname) {
         this.idxname = idxname;
+        this.idxtype = idxtype;
         this.tblname = tblname;
         this.fldname = fldname;
     }
@@ -26,6 +28,15 @@ public class CreateIndexData {
      */
     public String indexName() {
         return idxname;
+    }
+
+    /**
+     * Returns the type of the index - "hash" or "btree".
+     *
+     * @return the name of the index
+     */
+    public String indexType() {
+        return idxtype;
     }
 
     /**
